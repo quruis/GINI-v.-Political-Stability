@@ -1,0 +1,62 @@
+---
+title: "Brain Drain"
+author: "SCS"
+date: "3/15/2022"
+output: html_document
+---
+
+```{r setup, include=T}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE,
+	messages = FALSE
+)
+
+# kable
+options(knitr.kable.NA = '')
+
+# Set the graphical theme
+ggplot2::theme_set(ggplot2::theme_light())
+
+pacman::p_load(
+  haven,
+  AER,
+  kableExtra,
+  broom,
+  fixest,
+  modelsummary,
+  tidyverse
+)
+
+```
+
+```{r,eval=T}
+df <- read_csv("C:/Users/Sheva/Desktop/R-projects/ECON3569.csv")
+```
+
+```{r,eval=T}
+
+#create lagged variables for NMR
+
+df <- df %>%
+    mutate(lag2NMR = lag(NMR_1000, 2)) %>%
+    mutate(lag3NMR = lag(NMR_1000, 3))
+
+
+
+```
+
+```{r,eval=T}
+
+
+models<-list(
+  feols(GDP_growth ~ NMR_1000 + Pop_growth + Remit_MM + Net_ODA_per_capita, data = df),
+  feols(GDP_growth ~ lag(NMR_1000) + Pop_growth + Remit_MM + Net_ODA_per_capita, data = df),
+  feols(GDP_growth ~ lag(NMR_1000) + lag2NMR + lag3NMR + Pop_growth + Remit_MM + Net_ODA_per_capita, data = df),
+  feols(GDP_growth ~ lag3NMR + Pop_growth + Remit_MM + Net_ODA_per_capita, data = df)
+)
+
+msummary(models)
+
+```
