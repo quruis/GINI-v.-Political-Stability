@@ -1,0 +1,51 @@
+---
+title: "GINI v. Political Stability"
+author: "SCS"
+date: "2/22/2023"
+output: html_document
+---
+
+```{r setup, include=T}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE,
+	warning = FALSE,
+	messages = FALSE
+)
+
+# kable
+options(knitr.kable.NA = '')
+
+# Set the graphical theme
+ggplot2::theme_set(ggplot2::theme_light())
+
+pacman::p_load(
+  haven,
+  AER,
+  kableExtra,
+  broom,
+  fixest,
+  modelsummary,
+  tidyverse
+)
+
+```
+
+```{r,eval=T}
+df <- read_csv("https://github.com/quruis/GINI-v.-Political-Stability/raw/main/GINI.csv")
+```
+
+\`
+
+```{r,eval=T}
+
+
+model <-  lm(PS ~ GINI, data = df, se="hetero")
+ 
+
+msummary(model,
+         stars = T,
+         gof_omit = "AIC|BIC|Log.Lik.|F|R2 Pseudo|R2 Within") %>% 
+  kable_classic_2()
+
+```
